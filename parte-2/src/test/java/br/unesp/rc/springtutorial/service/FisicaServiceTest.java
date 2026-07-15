@@ -28,7 +28,7 @@ public class FisicaServiceTest {
     @Test
     @DisplayName("FisicaService.save(Fisica)")
     void testSave() {
-        entity = InstanceGenerator.getPessoaFisica("222.333.444-55", "user1");
+        entity = InstanceGenerator.getPessoaFisica("222.333.444-56", "user2");
         System.out.println(entity);
 
         Fisica f = fs.save(entity);
