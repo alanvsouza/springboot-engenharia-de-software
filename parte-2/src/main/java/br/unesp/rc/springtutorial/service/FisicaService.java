@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import br.unesp.rc.springtutorial.entity.Fisica;
@@ -27,6 +29,7 @@ public class FisicaService {
         return persistedEntity;
     }
 
+    @Cacheable(value = "fisica", key = "#cpf")
     public Fisica findByCpf(String cpf) {
         Fisica insertedEntity = null;
 
@@ -37,12 +40,14 @@ public class FisicaService {
         return insertedEntity;
     }
 
+    @CacheEvict(value = "fisica", key = "#entity.cpf")
     public void delete(Fisica entity) {
         if (repository != null) {
             repository.delete(entity);
         }
     }
 
+    @CacheEvict(value = "fisica", key = "#entity.cpf")
     public Fisica update(Fisica entity) {
         Fisica persistedEntity = null;
 
