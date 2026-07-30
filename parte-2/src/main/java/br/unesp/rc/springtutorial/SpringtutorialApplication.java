@@ -4,12 +4,14 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import br.unesp.rc.springtutorial.entity.Fisica;
 import br.unesp.rc.springtutorial.utils.InstanceGenerator;
 
 @SpringBootApplication
 @EnableCaching
+@EnableScheduling
 public class SpringtutorialApplication implements CommandLineRunner {
 
 	public static void main(String[] args) {
