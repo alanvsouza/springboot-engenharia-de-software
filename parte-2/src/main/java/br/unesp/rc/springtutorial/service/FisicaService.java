@@ -1,5 +1,6 @@
 package br.unesp.rc.springtutorial.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,12 +10,18 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import br.unesp.rc.springtutorial.entity.Fisica;
+import br.unesp.rc.springtutorial.entity.FisicaAudit;
+import br.unesp.rc.springtutorial.entity.OperationType;
+import br.unesp.rc.springtutorial.repository.FisicaAuditRepository;
 import br.unesp.rc.springtutorial.repository.FisicaRepository;
 
 @Component
 public class FisicaService {
     @Autowired
     private FisicaRepository repository;
+
+    @Autowired
+    private FisicaAuditRepository auditRepository;
 
     public FisicaService() {
     }
@@ -24,6 +31,7 @@ public class FisicaService {
 
         if (repository != null) {
             persistedEntity = repository.save(entity);
+            writeAudit(entity, OperationType.INSERT);
         }
 
         return persistedEntity;
@@ -43,6 +51,7 @@ public class FisicaService {
     @CacheEvict(value = "fisica", key = "#entity.cpf")
     public void delete(Fisica entity) {
         if (repository != null) {
+            writeAudit(entity, OperationType.DELETE);
             repository.delete(entity);
         }
     }
@@ -53,6 +62,7 @@ public class FisicaService {
 
         if (repository != null) {
             persistedEntity = repository.save(entity);
+            writeAudit(entity, OperationType.UPDATE);
         }
 
         return persistedEntity;
@@ -67,5 +77,17 @@ public class FisicaService {
         }
 
         return list;
+    }
+
+    private void writeAudit(Fisica entity, OperationType operationType) {
+        FisicaAudit audit = new FisicaAudit(
+            null,
+            entity.getIdPessoa(),
+            entity.getCpf(),
+            entity.getNome(),
+            operationType,
+            LocalDateTime.now()
+        );
+        auditRepository.save(audit);
     }
 }
