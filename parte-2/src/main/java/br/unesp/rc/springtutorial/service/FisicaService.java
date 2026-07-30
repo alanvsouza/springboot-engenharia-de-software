@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.unesp.rc.springtutorial.entity.Fisica;
 import br.unesp.rc.springtutorial.entity.FisicaAudit;
@@ -26,6 +27,7 @@ public class FisicaService {
     public FisicaService() {
     }
 
+    @Transactional
     public Fisica save(Fisica entity) {
         Fisica persistedEntity = null;
 
@@ -48,6 +50,7 @@ public class FisicaService {
         return insertedEntity;
     }
 
+    @Transactional
     @CacheEvict(value = "fisica", key = "#entity.cpf")
     public void delete(Fisica entity) {
         if (repository != null) {
@@ -56,6 +59,7 @@ public class FisicaService {
         }
     }
 
+    @Transactional
     @CacheEvict(value = "fisica", key = "#entity.cpf")
     public Fisica update(Fisica entity) {
         Fisica persistedEntity = null;
