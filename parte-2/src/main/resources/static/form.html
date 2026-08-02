@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Cadastro de Pessoa Física</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1.0">
+        <style>
+            body { font-family: Arial, sans-serif; max-width: 480px; margin: 40px auto; }
+            label { display: block; margin-top: 10px; font-weight: bold; }
+            input { width: 100%; padding: 6px; box-sizing: border-box; }
+            .erro { color: #c0392b; font-size: 0.9em; margin: 2px 0 0 0; }
+            button { margin-top: 20px; padding: 8px 16px; }
+            #resultado { margin-top: 20px; padding: 10px; border-radius: 4px; }
+            .sucesso { background: #dff0d8; color: #3c763d; }
+            .falha { background: #f2dede; color: #a94442; }
+        </style>
+    </head>
+
+    <body>
+        <h1>Cadastro de pessoa física</h1>
+        <p>Este formulário testa a validação do endpoint <code>POST /entidade/v1/</code>.
+           Deixe campos em branco ou preencha um CPF/CEP inválido para ver as mensagens de erro.</p>
+
+        <form id="form-pessoa">
+            <label for="usuario">Usuário</label>
+            <input type="text" id="usuario" name="usuario">
+
+            <label for="senha">Senha</label>
+            <input type="password" id="senha" name="senha">
+
+            <label for="nome">Nome</label>
+            <input type="text" id="nome" name="nome">
+
+            <label for="cpf">CPF (somente números)</label>
+            <input type="text" id="cpf" name="cpf" placeholder="11122233344">
+
+            <label for="email">Email</label>
+            <input type="text" id="email" name="email">
+
+            <label for="dataNascimento">Data de nascimento</label>
+            <input type="date" id="dataNascimento" name="dataNascimento">
+
+            <label for="cep">CEP do endereço (somente números)</label>
+            <input type="text" id="cep" name="cep" placeholder="13400000">
+
+            <button type="submit">Cadastrar</button>
+        </form>
+
+        <div id="resultado"></div>
+
+        <script>
+            document.getElementById('form-pessoa').addEventListener('submit', async function (event) {
+                event.preventDefault();
+
+                var payload = {
+                    usuario: document.getElementById('usuario').value,
+                    senha: document.getElementById('senha').value,
+                    nome: document.getElementById('nome').value,
+                    cpf: document.getElementById('cpf').value,
+                    email: document.getElementById('email').value,
+                    dataNascimento: document.getElementById('dataNascimento').value
+                        ? document.getElementById('dataNascimento').value + 'T00:00:00.000+0000'
+                        : null,
+                    endereco: [
+                        {
+                            rua: 'Rua de teste',
+                            numero: 1,
+                            bairro: 'Centro',
+                            cep: document.getElementById('cep').value,
+                            cidade: 'Piracicaba',
+                            estado: 'SP'
+                        }
+                    ]
+                };
+
+                var resultado = document.getElementById('resultado');
+                resultado.className = '';
+                resultado.innerHTML = 'Enviando...';
+
+                try {
+                    var response = await fetch('/entidade/v1/', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (response.ok) {
+                        resultado.className = 'sucesso';
+                        resultado.innerHTML = '<strong>Cadastro realizado com sucesso!</strong>';
+                        return;
+                    }
+
+                    var erros = await response.json();
+                    var html = '<strong>Corrija os campos abaixo:</strong><ul>';
+                    for (var campo in erros) {
+                        html += '<li class="erro"><b>' + campo + '</b>: ' + erros[campo] + '</li>';
+                    }
+                    html += '</ul>';
+
+                    resultado.className = 'falha';
+                    resultado.innerHTML = html;
+                } catch (err) {
+                    resultado.className = 'falha';
+                    resultado.innerHTML = 'Erro ao chamar a API: ' + err;
+                }
+            });
+        </script>
+    </body>
+</html>

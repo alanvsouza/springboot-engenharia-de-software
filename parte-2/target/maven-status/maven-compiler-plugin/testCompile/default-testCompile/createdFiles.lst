@@ -1,0 +1,4 @@
+br\unesp\rc\springtutorial\SpringtutorialApplicationTests.class
+br\unesp\rc\springtutorial\service\FisicaReportServiceTest.class
+br\unesp\rc\springtutorial\service\FisicaServiceTest.class
+br\unesp\rc\springtutorial\service\FisicaServiceAuditTest.class
